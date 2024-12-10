@@ -1,4 +1,4 @@
-# SwiftUI IDE Prototype
+# PanelsUI
 
 This project is a prototype IDE (Integrated Development Environment) created using SwiftUI. It includes features such as a file explorer, tab management, a code editor, and a resizable terminal drawer. The app demonstrates the use of various SwiftUI components and animations to simulate IDE-like functionality.
 
@@ -38,3 +38,4 @@ This project is a prototype IDE (Integrated Development Environment) created usi
    ```bash
    [git clone https://github.com/your-username/swiftui-ide-prototype.git
    cd swiftui-ide-prototype](https://github.com/Arbaz2402/PanelsUI.git)
+   
