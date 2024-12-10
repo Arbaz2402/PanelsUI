@@ -1,6 +1,9 @@
 import SwiftUI
 
+import SwiftUI
+
 struct ContentView: View {
+    @Environment(\.colorScheme) var colorScheme // Detect light/dark mode
     @State private var isSidebarOpen = false
     @State private var openTabs: [String] = []
     @State private var selectedTab: String? = nil
@@ -12,7 +15,6 @@ struct ContentView: View {
         ZStack(alignment: .leading) {
             NavigationView {
                 VStack(spacing: 0) {
-                    // Tab Bar
                     if !openTabs.isEmpty {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 10) {
@@ -25,17 +27,16 @@ struct ContentView: View {
                         .frame(height: 55)
                     }
 
-                    // Main content
                     if let selectedTab = selectedTab {
                         CodeEditorView(fileName: selectedTab)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(Color.gray.opacity(0.1))
+                            .background(colorScheme == .dark ? Color.black : Color.gray.opacity(0.1))
                             .cornerRadius(10)
                             .padding()
                     } else {
                         Text("Select a file from the sidebar.")
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(Color.gray.opacity(0.1))
+                            .background(colorScheme == .dark ? Color.black : Color.gray.opacity(0.1))
                             .cornerRadius(10)
                             .padding()
                     }
@@ -50,20 +51,18 @@ struct ContentView: View {
                             }
                         }) {
                             Image(systemName: "sidebar.left")
+                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                         }
                     }
                 }
             }
 
-            // Sidebar with resizing
             if isSidebarOpen {
                 HStack(spacing: 0) {
                     SidebarView(isSidebarOpen: $isSidebarOpen,
                                 openTabs: $openTabs,
                                 selectedTab: $selectedTab,
                                 width: $sidebarWidth)
-
-                    // Resizing handle
                     Rectangle()
                         .fill(Color.gray.opacity(0.2))
                         .frame(width: 4)
@@ -71,7 +70,7 @@ struct ContentView: View {
                             DragGesture()
                                 .onChanged { value in
                                     let newWidth = sidebarWidth + value.translation.width
-                                    sidebarWidth = max(150, min(400, newWidth)) // Set min/max limits for sidebar width
+                                    sidebarWidth = max(150, min(400, newWidth))
                                 }
                         )
                 }
@@ -79,7 +78,7 @@ struct ContentView: View {
                 .transition(.move(edge: .leading))
                 .zIndex(2)
             }
-            // Terminal Button
+
             GeometryReader { geometry in
                 if !isCompilerDrawerOpen {
                     Button(action: {
@@ -95,7 +94,7 @@ struct ContentView: View {
                             .scaledToFit()
                             .frame(width: 40, height: 40)
                             .padding()
-                            .background(Color.blue.opacity(0.7))
+                            .background(colorScheme == .dark ? Color.blue.opacity(0.7) : Color.blue)
                             .foregroundColor(.white)
                             .clipShape(Circle())
                             .shadow(radius: 10)
@@ -106,12 +105,13 @@ struct ContentView: View {
                     )
                 }
             }
-            
-            // Resizable Drawer
+
             if isCompilerDrawerOpen {
                 VStack {
                     Spacer()
                     ResizableDrawer(isOpen: $isCompilerDrawerOpen, height: $drawerHeight)
+                        .background(colorScheme == .dark ? Color.black : Color.white)
+                        .shadow(radius: 5)
                 }
                 .transition(.move(edge: .bottom))
                 .zIndex(3)
@@ -227,7 +227,7 @@ struct ResizableDrawer: View {
                         .padding(.trailing, 10)
                 }
             }
-            .background(Color(UIColor.systemBackground))
+            .background(Color(UIColor.systemBackground)) // Adapts automatically in dark mode
             .gesture(
                 DragGesture()
                     .onChanged { value in
@@ -235,10 +235,12 @@ struct ResizableDrawer: View {
                         height = max(minHeight, newHeight)
                     }
             )
+            
             HStack {
                 Text("Compiler Output")
                     .font(.headline)
                     .padding(.leading, 10)
+                    .foregroundColor(.primary) // Supports dark and light mode
                 Spacer()
                 Button(action: {
                     logs.removeAll()
@@ -267,7 +269,7 @@ struct ResizableDrawer: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.vertical, 5)
                                 .padding(.horizontal, 10)
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary) // Changes automatically based on dark mode
                         }
                     }
                 }
@@ -275,92 +277,12 @@ struct ResizableDrawer: View {
             }
         }
         .frame(height: height)
-        .background(Color(UIColor.systemBackground))
+        .background(Color(UIColor.systemBackground)) // Adapts automatically for dark mode
         .cornerRadius(15)
         .shadow(radius: 5)
     }
 }
 
-//struct SidebarView: View {
-//    @Binding var isSidebarOpen: Bool
-//    @Binding var openTabs: [String]
-//    @Binding var selectedTab: String?
-//    @Binding var width: CGFloat
-//
-//    @State private var expandedFolders: [String: Bool] = [:]
-//
-//    let fileHierarchy: [FileItem] = [
-//        .folder(name: "src", contents: [
-//            .file(name: "main.swift"),
-//            .file(name: "AppDelegate.swift"),
-//            .folder(name: "views", contents: [
-//                .file(name: "LoginView.swift"),
-//                .file(name: "DashboardView.swift")
-//            ])
-//        ]),
-//        .folder(name: "models", contents: [
-//            .file(name: "User.swift"),
-//            .file(name: "Session.swift")
-//        ]),
-//        .folder(name: "services", contents: [
-//            .file(name: "APIService.swift"),
-//            .file(name: "AuthService.swift")
-//        ]),
-//        .file(name: "README.md")
-//    ]
-//
-//    var body: some View {
-//        VStack(alignment: .leading, spacing: 8) {
-//            HStack {
-//                Text("Explorer")
-//                    .font(.headline)
-//                    .padding(.leading, 4)
-//
-//                Spacer()
-//
-//                Button(action: {
-//                    withAnimation {
-//                        isSidebarOpen = false
-//                    }
-//                }) {
-//                    Image(systemName: "xmark.circle.fill")
-//                        .foregroundColor(.blue)
-//                        .font(.system(size: 18))
-//                }
-//            }
-//            .padding(.horizontal, 12)
-//            .padding(.vertical, 8)
-//
-//            Divider()
-//
-//            ScrollView(.vertical, showsIndicators: false) {
-//                VStack(alignment: .leading, spacing: 6) {
-//                    ForEach(fileHierarchy, id: \.name) { item in
-//                        FileRowView(
-//                            item: item,
-//                            expandedFolders: $expandedFolders,
-//                            openTabs: $openTabs,
-//                            selectedTab: $selectedTab,
-//                            dismissSidebar: dismissSidebar
-//                        )
-//                    }
-//                }
-//                .padding(.horizontal, 8)
-//            }
-//            Spacer()
-//        }
-//        .padding(.top, 10)
-//        .frame(width: width)
-//        .background(Color(UIColor.systemBackground))
-//        .shadow(radius: 5)
-//    }
-//
-//    private func dismissSidebar() {
-//        withAnimation {
-//            isSidebarOpen = false
-//        }
-//    }
-//}
 
 
 // MARK: - FileRowView
@@ -452,6 +374,7 @@ struct TabItemView: View {
             Text(tab)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 5)
+                .foregroundColor(.primary) // Adapts to dark mode automatically
                 .onTapGesture {
                     selectedTab = tab
                 }
@@ -463,15 +386,15 @@ struct TabItemView: View {
                 }
             }) {
                 Image(systemName: "xmark")
-                    .foregroundColor(.red)
+                    .foregroundColor(.red) // Red will look fine on both modes
             }
             .padding(.trailing, 5)
         }
         .padding(.vertical, 5)
         .padding(.horizontal, 5)
-        .background(selectedTab == tab ? Color.gray.opacity(0.3) : Color.white)
+        .background(selectedTab == tab ? Color.gray.opacity(0.3) : Color(UIColor.systemBackground)) // Adaptive background
         .cornerRadius(8)
-        .shadow(radius: 3)
+        .shadow(color: Color.black.opacity(0.2), radius: 3) // Adaptable shadow
     }
 }
 
@@ -480,9 +403,21 @@ struct CodeEditorView: View {
 
     var body: some View {
         ScrollView {
-            Text("import SwiftUI\n\n// Dummy code for \(fileName)\n\nstruct \(fileName.prefix(fileName.count - 6))View: View {\n    var body: some View {\n        Text(\"Hello, \(fileName)!\")\n    }\n}")
+            Text("""
+                import SwiftUI
+
+                // Dummy code for \(fileName)
+
+                struct \(fileName.prefix(fileName.count - 6))View: View {
+                    var body: some View {
+                        Text("Hello, \(fileName)!")
+                    }
+                }
+                """)
                 .font(.system(.body, design: .monospaced))
+                .foregroundColor(.primary) // Adapts automatically to light/dark mode
                 .padding()
+                .background(Color(UIColor.systemBackground)) // Adaptive background
         }
     }
 }
