@@ -7,7 +7,7 @@ struct ContentView: View {
     @State private var isCompilerDrawerOpen = false
     @State private var drawerHeight: CGFloat = 200
     @State private var sidebarWidth: CGFloat = 250
-    
+
     var body: some View {
         ZStack(alignment: .leading) {
             NavigationView {
@@ -24,7 +24,7 @@ struct ContentView: View {
                         }
                         .frame(height: 55)
                     }
-                    
+
                     // Main content
                     if let selectedTab = selectedTab {
                         CodeEditorView(fileName: selectedTab)
@@ -54,15 +54,16 @@ struct ContentView: View {
                     }
                 }
             }
-            
-            // Sidebar with resize handle
+
+            // Sidebar with resizing
             if isSidebarOpen {
                 HStack(spacing: 0) {
                     SidebarView(isSidebarOpen: $isSidebarOpen,
-                               openTabs: $openTabs,
-                               selectedTab: $selectedTab,
-                               width: $sidebarWidth)
-                    
+                                openTabs: $openTabs,
+                                selectedTab: $selectedTab,
+                                width: $sidebarWidth)
+
+                    // Resizing handle
                     Rectangle()
                         .fill(Color.gray.opacity(0.2))
                         .frame(width: 4)
@@ -70,14 +71,14 @@ struct ContentView: View {
                             DragGesture()
                                 .onChanged { value in
                                     let newWidth = sidebarWidth + value.translation.width
-                                    sidebarWidth = max(150, newWidth)
+                                    sidebarWidth = max(150, min(400, newWidth)) // Set min/max limits for sidebar width
                                 }
                         )
                 }
+                .frame(width: sidebarWidth)
                 .transition(.move(edge: .leading))
                 .zIndex(2)
             }
-            
             // Terminal Button
             GeometryReader { geometry in
                 if !isCompilerDrawerOpen {
@@ -118,6 +119,88 @@ struct ContentView: View {
         }
     }
 }
+
+// SidebarView updates to use sidebarWidth
+struct SidebarView: View {
+    @Binding var isSidebarOpen: Bool
+    @Binding var openTabs: [String]
+    @Binding var selectedTab: String?
+    @Binding var width: CGFloat
+
+    @State private var expandedFolders: [String: Bool] = [:]
+
+    let fileHierarchy: [FileItem] = [
+        .folder(name: "src", contents: [
+            .file(name: "main.swift"),
+            .file(name: "AppDelegate.swift"),
+            .folder(name: "views", contents: [
+                .file(name: "LoginView.swift"),
+                .file(name: "DashboardView.swift")
+            ])
+        ]),
+        .folder(name: "models", contents: [
+            .file(name: "User.swift"),
+            .file(name: "Session.swift")
+        ]),
+        .folder(name: "services", contents: [
+            .file(name: "APIService.swift"),
+            .file(name: "AuthService.swift")
+        ]),
+        .file(name: "README.md")
+    ]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("Explorer")
+                    .font(.headline)
+                    .padding(.leading, 4)
+
+                Spacer()
+
+                Button(action: {
+                    withAnimation {
+                        isSidebarOpen = false
+                    }
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.blue)
+                        .font(.system(size: 18))
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+
+            Divider()
+
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 6) {
+                    ForEach(fileHierarchy, id: \.name) { item in
+                        FileRowView(
+                            item: item,
+                            expandedFolders: $expandedFolders,
+                            openTabs: $openTabs,
+                            selectedTab: $selectedTab,
+                            dismissSidebar: dismissSidebar
+                        )
+                    }
+                }
+                .padding(.horizontal, 8)
+            }
+            Spacer()
+        }
+        .frame(width: width)
+        .background(Color(UIColor.systemBackground))
+        .shadow(radius: 5)
+    }
+
+    private func dismissSidebar() {
+        withAnimation {
+            isSidebarOpen = false
+        }
+    }
+}
+
 
 struct ResizableDrawer: View {
     @Binding var isOpen: Bool
@@ -198,86 +281,86 @@ struct ResizableDrawer: View {
     }
 }
 
-struct SidebarView: View {
-    @Binding var isSidebarOpen: Bool
-    @Binding var openTabs: [String]
-    @Binding var selectedTab: String?
-    @Binding var width: CGFloat
-
-    @State private var expandedFolders: [String: Bool] = [:]
-
-    let fileHierarchy: [FileItem] = [
-        .folder(name: "src", contents: [
-            .file(name: "main.swift"),
-            .file(name: "AppDelegate.swift"),
-            .folder(name: "views", contents: [
-                .file(name: "LoginView.swift"),
-                .file(name: "DashboardView.swift")
-            ])
-        ]),
-        .folder(name: "models", contents: [
-            .file(name: "User.swift"),
-            .file(name: "Session.swift")
-        ]),
-        .folder(name: "services", contents: [
-            .file(name: "APIService.swift"),
-            .file(name: "AuthService.swift")
-        ]),
-        .file(name: "README.md")
-    ]
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text("Explorer")
-                    .font(.headline)
-                    .padding(.leading, 4)
-
-                Spacer()
-
-                Button(action: {
-                    withAnimation {
-                        isSidebarOpen = false
-                    }
-                }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.blue)
-                        .font(.system(size: 18))
-                }
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-
-            Divider()
-
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 6) {
-                    ForEach(fileHierarchy, id: \.name) { item in
-                        FileRowView(
-                            item: item,
-                            expandedFolders: $expandedFolders,
-                            openTabs: $openTabs,
-                            selectedTab: $selectedTab,
-                            dismissSidebar: dismissSidebar
-                        )
-                    }
-                }
-                .padding(.horizontal, 8)
-            }
-            Spacer()
-        }
-        .padding(.top, 10)
-        .frame(width: width)
-        .background(Color(UIColor.systemBackground))
-        .shadow(radius: 5)
-    }
-
-    private func dismissSidebar() {
-        withAnimation {
-            isSidebarOpen = false
-        }
-    }
-}
+//struct SidebarView: View {
+//    @Binding var isSidebarOpen: Bool
+//    @Binding var openTabs: [String]
+//    @Binding var selectedTab: String?
+//    @Binding var width: CGFloat
+//
+//    @State private var expandedFolders: [String: Bool] = [:]
+//
+//    let fileHierarchy: [FileItem] = [
+//        .folder(name: "src", contents: [
+//            .file(name: "main.swift"),
+//            .file(name: "AppDelegate.swift"),
+//            .folder(name: "views", contents: [
+//                .file(name: "LoginView.swift"),
+//                .file(name: "DashboardView.swift")
+//            ])
+//        ]),
+//        .folder(name: "models", contents: [
+//            .file(name: "User.swift"),
+//            .file(name: "Session.swift")
+//        ]),
+//        .folder(name: "services", contents: [
+//            .file(name: "APIService.swift"),
+//            .file(name: "AuthService.swift")
+//        ]),
+//        .file(name: "README.md")
+//    ]
+//
+//    var body: some View {
+//        VStack(alignment: .leading, spacing: 8) {
+//            HStack {
+//                Text("Explorer")
+//                    .font(.headline)
+//                    .padding(.leading, 4)
+//
+//                Spacer()
+//
+//                Button(action: {
+//                    withAnimation {
+//                        isSidebarOpen = false
+//                    }
+//                }) {
+//                    Image(systemName: "xmark.circle.fill")
+//                        .foregroundColor(.blue)
+//                        .font(.system(size: 18))
+//                }
+//            }
+//            .padding(.horizontal, 12)
+//            .padding(.vertical, 8)
+//
+//            Divider()
+//
+//            ScrollView(.vertical, showsIndicators: false) {
+//                VStack(alignment: .leading, spacing: 6) {
+//                    ForEach(fileHierarchy, id: \.name) { item in
+//                        FileRowView(
+//                            item: item,
+//                            expandedFolders: $expandedFolders,
+//                            openTabs: $openTabs,
+//                            selectedTab: $selectedTab,
+//                            dismissSidebar: dismissSidebar
+//                        )
+//                    }
+//                }
+//                .padding(.horizontal, 8)
+//            }
+//            Spacer()
+//        }
+//        .padding(.top, 10)
+//        .frame(width: width)
+//        .background(Color(UIColor.systemBackground))
+//        .shadow(radius: 5)
+//    }
+//
+//    private func dismissSidebar() {
+//        withAnimation {
+//            isSidebarOpen = false
+//        }
+//    }
+//}
 
 
 // MARK: - FileRowView
