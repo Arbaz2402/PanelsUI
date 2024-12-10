@@ -23,10 +23,25 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		08B0ED242D06FAB100009D2C /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		0877028F2D05752500FE954B /* PanelsUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PanelsUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		087702A02D05752700FE954B /* PanelsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PanelsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		087702AA2D05752700FE954B /* PanelsUIUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PanelsUIUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		08B0ED122D06FAB000009D2C /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		08B0ED142D06FAB100009D2C /* XcodeKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XcodeKit.framework; path = Library/Frameworks/XcodeKit.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -78,6 +93,7 @@
 				087702912D05752500FE954B /* PanelsUI */,
 				087702A32D05752700FE954B /* PanelsUITests */,
 				087702AD2D05752700FE954B /* PanelsUIUITests */,
+				08B0ED112D06FAB000009D2C /* Frameworks */,
 				087702902D05752500FE954B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -92,6 +108,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		08B0ED112D06FAB000009D2C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				08B0ED122D06FAB000009D2C /* Cocoa.framework */,
+				08B0ED142D06FAB100009D2C /* XcodeKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -102,6 +127,7 @@
 				0877028B2D05752500FE954B /* Sources */,
 				0877028C2D05752500FE954B /* Frameworks */,
 				0877028D2D05752500FE954B /* Resources */,
+				08B0ED242D06FAB100009D2C /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
