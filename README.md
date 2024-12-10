@@ -36,5 +36,5 @@ This project is a prototype IDE (Integrated Development Environment) created usi
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/your-username/swiftui-ide-prototype.git
-   cd swiftui-ide-prototype
+   [git clone https://github.com/your-username/swiftui-ide-prototype.git
+   cd swiftui-ide-prototype](https://github.com/Arbaz2402/PanelsUI.git)
