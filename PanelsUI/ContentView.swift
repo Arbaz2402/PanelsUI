@@ -1,9 +1,7 @@
 import SwiftUI
 
-import SwiftUI
-
 struct ContentView: View {
-    @Environment(\.colorScheme) var colorScheme // Detect light/dark mode
+    @Environment(\.colorScheme) var colorScheme
     @State private var isSidebarOpen = false
     @State private var openTabs: [String] = []
     @State private var selectedTab: String? = nil
@@ -227,7 +225,7 @@ struct ResizableDrawer: View {
                         .padding(.trailing, 10)
                 }
             }
-            .background(Color(UIColor.systemBackground)) // Adapts automatically in dark mode
+            .background(Color(UIColor.systemBackground))
             .gesture(
                 DragGesture()
                     .onChanged { value in
@@ -240,7 +238,7 @@ struct ResizableDrawer: View {
                 Text("Compiler Output")
                     .font(.headline)
                     .padding(.leading, 10)
-                    .foregroundColor(.primary) // Supports dark and light mode
+                    .foregroundColor(.primary)
                 Spacer()
                 Button(action: {
                     logs.removeAll()
@@ -269,7 +267,7 @@ struct ResizableDrawer: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.vertical, 5)
                                 .padding(.horizontal, 10)
-                                .foregroundColor(.primary) // Changes automatically based on dark mode
+                                .foregroundColor(.primary)
                         }
                     }
                 }
@@ -277,7 +275,7 @@ struct ResizableDrawer: View {
             }
         }
         .frame(height: height)
-        .background(Color(UIColor.systemBackground)) // Adapts automatically for dark mode
+        .background(Color(UIColor.systemBackground))
         .cornerRadius(15)
         .shadow(radius: 5)
     }
@@ -374,7 +372,7 @@ struct TabItemView: View {
             Text(tab)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 5)
-                .foregroundColor(.primary) // Adapts to dark mode automatically
+                .foregroundColor(.primary)
                 .onTapGesture {
                     selectedTab = tab
                 }
@@ -386,15 +384,15 @@ struct TabItemView: View {
                 }
             }) {
                 Image(systemName: "xmark")
-                    .foregroundColor(.red) // Red will look fine on both modes
+                    .foregroundColor(.red)
             }
             .padding(.trailing, 5)
         }
         .padding(.vertical, 5)
         .padding(.horizontal, 5)
-        .background(selectedTab == tab ? Color.gray.opacity(0.3) : Color(UIColor.systemBackground)) // Adaptive background
+        .background(selectedTab == tab ? Color.gray.opacity(0.3) : Color(UIColor.systemBackground))
         .cornerRadius(8)
-        .shadow(color: Color.black.opacity(0.2), radius: 3) // Adaptable shadow
+        .shadow(color: Color.black.opacity(0.2), radius: 3)
     }
 }
 
@@ -415,9 +413,9 @@ struct CodeEditorView: View {
                 }
                 """)
                 .font(.system(.body, design: .monospaced))
-                .foregroundColor(.primary) // Adapts automatically to light/dark mode
+                .foregroundColor(.primary)
                 .padding()
-                .background(Color(UIColor.systemBackground)) // Adaptive background
+                .background(Color(UIColor.systemBackground))
         }
     }
 }
