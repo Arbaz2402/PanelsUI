@@ -118,7 +118,6 @@ struct ContentView: View {
     }
 }
 
-// SidebarView updates to use sidebarWidth
 struct SidebarView: View {
     @Binding var isSidebarOpen: Bool
     @Binding var openTabs: [String]
@@ -281,9 +280,6 @@ struct ResizableDrawer: View {
     }
 }
 
-
-
-// MARK: - FileRowView
 struct FileRowView: View {
     let item: FileItem
     @Binding var expandedFolders: [String: Bool]
@@ -341,7 +337,6 @@ struct FileRowView: View {
     }
 }
 
-// MARK: - FileItem Model
 enum FileItem: Identifiable {
     case folder(name: String, contents: [FileItem])
     case file(name: String)
@@ -355,12 +350,6 @@ enum FileItem: Identifiable {
         }
     }
 }
-
-
-
-
-
-
 
 struct TabItemView: View {
     var tab: String
